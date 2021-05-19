@@ -96,7 +96,7 @@ int main (int argc, char *argv[]) {
             if (!strcmp (buffer_out, "exit")) {
                 break;
             }
-            res = send(sock, buffer_out, sizeof(buffer_out), 0);
+            res = send(clientSock, buffer_out, sizeof(buffer_out), 0);
             /* 
             socket file descriptor
             mensage (buffer)
