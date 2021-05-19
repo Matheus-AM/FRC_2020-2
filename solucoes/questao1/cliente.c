@@ -57,13 +57,15 @@ int main (int argc, char **argv) {
        
         scanf("%s", &buffer_out);
 
-        res = sendto(sock, buffer_out, BUFFMAX, 0, (struct sockaddr *) &endServ, (socklen_t) sizeof(endServ));
+        res = sendto(sock, buffer_out, strlen(buffer_out), 0, (struct sockaddr *) &endServ, (socklen_t) sizeof(endServ));
         pause(2);
 
         if (res == -1) {
             perror("Sendto");
             exit (0);
         }
+
+        length = sizeof(endServ);
 
         res = recvfrom(sock, buffer_in, BUFFMAX, 0, (struct sockaddr *) &endServ, (socklen_t*)&length);
 

@@ -39,7 +39,7 @@ int main (int argc, char * * argv) {
 
     bzero ((char *)&endCli, sizeof (endCli));
     endCli.sin_family = AF_INET;
-    endCli.sin_port = htons(PORT);
+    endCli.sin_port = htons(0);
     endCli.sin_addr.s_addr = htonl(INADDR_ANY); 
 
     bzero ((char *)&endServ, sizeof (endServ));
@@ -53,6 +53,8 @@ int main (int argc, char * * argv) {
     }
 
     while(1){
+
+        length = sizeof(endCli);
         res = recvfrom(sock, buffer_in, BUFFMAX, 0, (struct sockaddr *) &endCli, (socklen_t*)&length);
  
         if (res == -1) {
