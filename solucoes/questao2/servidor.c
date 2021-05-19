@@ -9,7 +9,7 @@
 #include <netinet/in.h>
 #include <sys/wait.h>
 
-#define PORT 53
+#define PORT 5000
 #define ERROR -1
 #define BUFFMAX 256     //tamanho maximo da string
 #define BACKLOG 5
@@ -24,7 +24,7 @@ int main (int argc, char *argv[]) {
     int sock;
     char buffer_in[BUFFMAX];
     char buffer_out[BUFFMAX];
-    int connection, sended, recived;
+    int res;
 
     if (argc < 2) {
         printf ("Use %s <host>\n\n", argv [0]);
@@ -41,13 +41,19 @@ int main (int argc, char *argv[]) {
         exit (0);
     }
 
-    struct sockaddr_in network;
-    bzero ((char *) &network, sizeof(network));
-    network.sin_family = AF_INET;
-    network.sin_port = htons(PORT);
-    network.sin_addr.s_addr = INADDR_ANY; 
+    struct sockaddr_in endServ, endCli;
 
-    if(bind(sock, (struct sockaddr*) &network, sizeof(network)) == -1) {
+    bzero ((char *)&endCli, sizeof (endCli));
+    endCli.sin_family = AF_INET;
+    endCli.sin_port = htons(0);
+    endCli.sin_addr.s_addr = htonl(INADDR_ANY); 
+
+    bzero ((char *)&endServ, sizeof (endServ));
+    endServ.sin_family = AF_INET;
+    endServ.sin_port = htons(PORT);
+    endServ.sin_addr.s_addr = inet_addr(argv[1]);
+
+    if(bind(sock, (struct sockaddr*) &endServ, sizeof(endServ)) == -1) {
         /*
         socket file descriptor
         address
@@ -67,11 +73,11 @@ int main (int argc, char *argv[]) {
 
     while(connections <= BACKLOG){
 
-
-        int clientSock = accept(sock, NULL, NULL);
+        int cliLen = sizeof(endCli)
+        int clientSock = accept(sock, (struct sockaddr *) &endCli, &cliLen);
         
 
-        if (connection == ERROR) {
+        if (clientSock == ERROR) {
             perror ("Connect");
             exit (0);
         }
@@ -83,35 +89,37 @@ int main (int argc, char *argv[]) {
         while(1){
             printf ("\nCliente: ");
             scanf("%s", buffer_out);
-            sended = send(sock, buffer_out, sizeof(buffer_out), 0);
-            /* 
-            socket file descriptor
-            mensage (buffer)
-            mensage.length (length)
-            flag (0 default)
-            */
-            if (sended == ERROR) {
-                perror ("Send");
-                exit (0);
-            }
             if (!strcmp (buffer_out, "exit")) {
                 break;
             }
-
-            recived = recv(sock, buffer_in, sizeof(buffer_in), 0);
+            res = send(sock, buffer_out, sizeof(buffer_out), 0);
             /* 
             socket file descriptor
             mensage (buffer)
             mensage.length (length)
             flag (0 default)
             */
-            if (recived == ERROR) {
+            if (res == ERROR) {
+                perror ("Send");
+                exit (0);
+            }
+
+
+            res = recv(clientSock, buffer_in, sizeof(buffer_in), 0);
+            /* 
+            socket file descriptor
+            mensage (buffer)
+            mensage.length (length)
+            flag (0 default)
+            */
+            if (res == ERROR) {
                 perror ("Recive");
                 exit (0);
             }
             printf("\nServidor: %s", buffer_in);
 
         }
+        close(clientSock)
     }
     close(sock);
     return 0;
