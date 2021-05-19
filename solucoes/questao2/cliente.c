@@ -15,7 +15,6 @@
 
 int main (int argc, char * * argv) {
 
-
     int sock;
     char buffer_in[BUFFMAX];
     char buffer_out[BUFFMAX];
