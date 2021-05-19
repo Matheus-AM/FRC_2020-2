@@ -9,10 +9,10 @@
 #include <netinet/in.h>
 #include <sys/wait.h>
 
-#define PORT 53
+#define PORT 8000
 #define BUFFMAX 256    //tamanho maximo da string
 
-int main (int argc, char * * argv) {
+int main (int argc, char **argv) {
 
     struct sockaddr_in network;
 
@@ -20,7 +20,7 @@ int main (int argc, char * * argv) {
 
     char buffer_in[BUFFMAX];
     char buffer_out[BUFFMAX];
-    int request, response, length;
+    int res, length;
 
     if (argc < 2) {
         printf ("Use %s <host>\n\n", argv [0]);
@@ -40,11 +40,11 @@ int main (int argc, char * * argv) {
     bzero ((char *)&network, sizeof (network));
     network.sin_family = AF_INET;
     network.sin_port = htons(PORTA);
-    network.sin_addr.s_addr = htonl(INADDR_ANY); 
+    network.sin_addr.s_addr = inet_addr(argv[1]); 
 
     bind(sock, (struct sockaddr*) &network, sizeof(network));
 
-    printf("IP: %s\n", INADDR_ANY);
+    printf("IP: %s\n", argv[1]);
 
     while(1){
 
@@ -52,16 +52,16 @@ int main (int argc, char * * argv) {
 
         scanf("%s", &buffer_out);
 
-        request = sendto(sock, buffer_out, BUFFMAX, 0, (struct sockaddr *) &network, (socklen_t) sizeof(network));
+        res = sendto(sock, buffer_out, BUFFMAX, 0, (struct sockaddr *) &network, (socklen_t) sizeof(network));
 
-        if (request == -1) {
+        if (res == -1) {
             perror("Sendto");
             exit (0);
         }
 
-        response = recvfrom(sock, buffer_in, BUFFMAX, 0, (struct sockaddr *) &network, (socklen_t*)&length);
+        res = recvfrom(sock, buffer_in, BUFFMAX, 0, (struct sockaddr *) &network, (socklen_t*)&length);
 
-        if (response == -1) {
+        if (res == -1) {
             perror("Recvfrom");
             exit (0);
         }

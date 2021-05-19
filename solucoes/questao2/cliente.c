@@ -9,58 +9,83 @@
 #include <netinet/in.h>
 #include <sys/wait.h>
 
-#define PORTA 53
-#define ERRO -1
-#define TAMMAX 250     //tamanho maximo da string
+#define PORT 53
+#define ERROR -1
+#define BUFFMAX 256     //tamanho maximo da string
 
 int main (int argc, char * * argv) {
 
-    struct sockaddr_in network;
 
-    int sock,
-        newSock,
-        resp,
-        strucsize;
-
-    char msg [TAMMAX];
+    int sock;
+    char buffer_in[BUFFMAX];
+    char buffer_out[BUFFMAX];
+    int connection, sended, recived;
 
     if (argc < 2) {
         printf ("Use %s <host>\n\n", argv [0]);
         exit (0);
     }
 
-    sock = socket (AF_INET, SOCK_DGRAM, 0);
+    sock = socket (AF_INET, SOCK_STREAM, 0);
+    //domain –  AF_INET for IPv4/ AF_INET6 for IPv6 
+    //type – SOCK_STREAM for TCP / SOCK_DGRAM for UDP 
+    //0 means use default protocol for the address family.
 
-    if (sock == ERRO) {
+    if (sock == ERROR) {
         perror ("Socket");
         exit (0);
     }
 
-    bzero ((char *)&network, sizeof (network));
+    struct sockaddr_in network;
+    bzero ((char *) &network, sizeof(network));
     network.sin_family = AF_INET;
-    network.sin_port = htons (PORTA);
-    network.sin_addr.s_addr = inet_addr (argv [1]); 
+    network.sin_port = htons(PORT);
+    network.sin_addr.s_addr = INADDR_ANY; 
 
-    strucsize = sizeof (network);
+    connection = connect(sock, (struct sockaddr *)&network, sizeof (network));
 
-    resp = connect (sock, (struct sockaddr *)&network, strucsize);
-
-    if (resp == ERRO) {
+    if (connection == ERROR) {
         perror ("Connect");
         exit (0);
     }
 
-    fprintf (stdout, "Conectado em %s\n", argv [1]);
+    // getting the address port and remote host
+    printf("Local Port: %d\n", PORT);
+    printf("Remote Host: %s\n", inet_ntoa(network.sin_addr));
 
-    for (;;) {
-        printf ("\nMensagem: ");
-        fgets(msg, sizeof(msg), stdin);
-        msg[strlen(msg)-1] = '\0';
-        send (sock, msg, sizeof (msg), 0);
-        if (!strcmp (msg, "exit")) {
+    while(1){
+        printf ("\nCliente: ");
+        scanf("%s", buffer_out);
+        sended = send(sock, buffer_out, sizeof(buffer_out), 0);
+        /* 
+        socket file descriptor
+        mensage (buffer)
+        mensage.length (length)
+        flag (0 default)
+        */
+        if (sended == ERROR) {
+            perror ("Send");
             exit (0);
         }
+        if (!strcmp (buffer_out, "exit")) {
+            break;
+        }
+
+        recived = recv(sock, buffer_in, sizeof(buffer_in), 0);
+        /* 
+        socket file descriptor
+        mensage (buffer)
+        mensage.length (length)
+        flag (0 default)
+        */
+        if (recived == ERROR) {
+            perror ("Recive");
+            exit (0);
+        }
+        printf("\nServidor: %s", buffer_in);
+
     }
 
+    close(sock);
     return 0;
 }
