@@ -16,11 +16,6 @@
 
 int main (int argc, char *argv[]) {
 
-    if(argc<3)  {
-        printf("uso correto: %s <ip_do_servidor> <porta_do_servidor>\n", argv[0]);
-        exit(1);  
-    }
-
     int sock;
     char buffer_in[BUFFMAX];
     char buffer_out[BUFFMAX];
@@ -83,7 +78,20 @@ int main (int argc, char *argv[]) {
         }
 
         while(1){
-            printf ("\nCliente: ");
+            res = recv(clientSock, buffer_in, sizeof(buffer_in), 0);
+            /* 
+            socket file descriptor
+            mensage (buffer)
+            mensage.length (length)
+            flag (0 default)
+            */
+            if (res == ERROR) {
+                perror ("Recive");
+                exit (0);
+            }
+            printf("\nCliente: %s", buffer_in);
+
+            printf ("\nServidor: ");
             scanf("%s", buffer_out);
             if (!strcmp (buffer_out, "exit")) {
                 break;
@@ -99,20 +107,6 @@ int main (int argc, char *argv[]) {
                 perror ("Send");
                 exit (0);
             }
-
-
-            res = recv(clientSock, buffer_in, sizeof(buffer_in), 0);
-            /* 
-            socket file descriptor
-            mensage (buffer)
-            mensage.length (length)
-            flag (0 default)
-            */
-            if (res == ERROR) {
-                perror ("Recive");
-                exit (0);
-            }
-            printf("\nServidor: %s", buffer_in);
 
         }
         close(clientSock);
