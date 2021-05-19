@@ -57,7 +57,7 @@ int main (int argc, char **argv) {
        
         scanf("%s", &buffer_out);
 
-        res = sendto(sock, buffer_out, BUFFMAX, 0, (struct sockaddr *) &endServ, sizeof(endServ));
+        res = sendto(sock, buffer_out, BUFFMAX, 0, (struct sockaddr *) &endServ, (socklen_t) sizeof(endServ));
         pause(2);
 
         if (res == -1) {
@@ -65,7 +65,7 @@ int main (int argc, char **argv) {
             exit (0);
         }
 
-        res = recvfrom(sock, buffer_in, BUFFMAX, 0, (struct sockaddr *) &endServ, sizeof(endServ));
+        res = recvfrom(sock, buffer_in, BUFFMAX, 0, (struct sockaddr *) &endServ, (socklen_t*)&length);
 
         if (res == -1) {
             perror("Recvfrom");
