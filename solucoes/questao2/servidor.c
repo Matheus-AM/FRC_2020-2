@@ -63,7 +63,7 @@ int main (int argc, char *argv[]) {
         exit(0);
     }
     int connections = 0;
-    struct sockaddr_in newNetworks[BACKLOG];
+    struct sockaddr_in newcli[BACKLOG];
 
     listen(sock, BACKLOG);
     /*
@@ -73,7 +73,7 @@ int main (int argc, char *argv[]) {
 
     while(connections <= BACKLOG){
 
-        int cliLen = sizeof(endCli)
+        int cliLen = sizeof(endCli);
         int clientSock = accept(sock, (struct sockaddr *) &endCli, &cliLen);
         
 
@@ -81,10 +81,6 @@ int main (int argc, char *argv[]) {
             perror ("Connect");
             exit (0);
         }
-
-        // getting the address port and remote host
-        printf("Local Port: %d\n", PORT);
-        printf("Remote Host: %s\n", inet_ntoa(network.sin_addr));
 
         while(1){
             printf ("\nCliente: ");
@@ -119,7 +115,7 @@ int main (int argc, char *argv[]) {
             printf("\nServidor: %s", buffer_in);
 
         }
-        close(clientSock)
+        close(clientSock);
     }
     close(sock);
     return 0;
