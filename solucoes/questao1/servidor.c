@@ -53,8 +53,8 @@ int main (int argc, char * * argv) {
     }
 
     while(1){
-        res = recvfrom(sock, buffer_in, BUFFMAX, 0, (struct sockaddr *) &endCli,(socklen_t) sizeof(endCli));
-
+        res = recvfrom(sock, buffer_in, BUFFMAX, 0, (struct sockaddr *) &endCli, (socklen_t*)&length);
+ 
         if (res == -1) {
             perror("Recvfrom");
             exit (0);
@@ -70,7 +70,7 @@ int main (int argc, char * * argv) {
 
         scanf("%s", &buffer_out);
 
-        res = sendto(sock, buffer_out, BUFFMAX, 0, (struct sockaddr *) &endCli,(socklen_t*)&lenght);
+        res = sendto(sock, buffer_out, BUFFMAX, 0, (struct sockaddr *) &endCli, (socklen_t) sizeof(endCli));
 
         if (res == -1) {
             perror("Sendto");
