@@ -58,8 +58,11 @@ int main (int argc, char **argv) {
        
         scanf("%s", &buffer_out);
 
+        if(!strcmp(buffer_out, "exit")){
+            break;
+        }
+
         res = sendto(sock, buffer_out, strlen(buffer_out), 0, (struct sockaddr *) &endServ, (socklen_t) sizeof(endServ));
-        pause(2);
 
         if (res == -1) {
             perror("Sendto");
@@ -75,9 +78,7 @@ int main (int argc, char **argv) {
             exit (0);
         }
 
-        if(!strcmp(buffer_in, "exit")){
-            break;
-        }
+
 
         printf ("\nResposta: %s", buffer_in);
     }

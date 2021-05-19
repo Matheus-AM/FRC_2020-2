@@ -56,6 +56,10 @@ int main (int argc, char * * argv) {
     while(1){
         printf ("\nCliente: ");
         scanf("%s", buffer_out);
+        if (!strcmp (buffer_out, "exit")) {
+            break;
+        }
+
         sended = send(sock, buffer_out, sizeof(buffer_out), 0);
         /* 
         socket file descriptor
@@ -66,9 +70,6 @@ int main (int argc, char * * argv) {
         if (sended == ERROR) {
             perror ("Send");
             exit (0);
-        }
-        if (!strcmp (buffer_out, "exit")) {
-            break;
         }
 
         recived = recv(sock, buffer_in, sizeof(buffer_in), 0);
