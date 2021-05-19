@@ -14,7 +14,7 @@
 
 int main (int argc, char * * argv) {
 
-    struct sockaddr_in network;
+    struct sockaddr_in endCli, endServ;
 
     int sock;
 
@@ -37,22 +37,23 @@ int main (int argc, char * * argv) {
         exit(0);
     }
 
-    bzero ((char *)&network, sizeof (network));
-    network.sin_family = AF_INET;
-    network.sin_port = htons(PORTA);
-    network.sin_addr.s_addr = inet_addr(argv[1]);
+    bzero ((char *)&endCli, sizeof (endCli));
+    endCli.sin_family = AF_INET;
+    endCli.sin_port = htons(PORT);
+    endCli.sin_addr.s_addr = htonl(INADDR_ANY); 
 
+    bzero ((char *)&endServ, sizeof (endServ));
+    endServ.sin_family = AF_INET;
+    endServ.sin_port = htons(PORT);
+    endServ.sin_addr.s_addr = inet_addr(argv[1]);
 
-    if(bind(sock, (struct sockaddr*) &network, sizeof(network)) == -1) {
+    if(bind(sock, (struct sockaddr*) &endServ, sizeof(endServ)) == -1) {
         perror("bind failed");
         exit(0);
     }
 
-
-    printf("IP: %s\n", INADDR_ANY);
-
     while(1){
-        res = recvfrom(sock, buffer_in, BUFFMAX, 0, (struct sockaddr *) &network, (socklen_t*)&length);
+        res = recvfrom(sock, buffer_in, BUFFMAX, 0, (struct sockaddr *) &endCli, sizeof(endCli));
 
         if (res == -1) {
             perror("Recvfrom");
@@ -69,7 +70,7 @@ int main (int argc, char * * argv) {
 
         scanf("%s", &buffer_out);
 
-        res = sendto(sock, buffer_out, BUFFMAX, 0, (struct sockaddr *) &network, (socklen_t) sizeof(network));
+        res = sendto(sock, buffer_out, BUFFMAX, 0, (struct sockaddr *) &endCli, sizeof(endCli));
 
         if (res == -1) {
             perror("Sendto");
