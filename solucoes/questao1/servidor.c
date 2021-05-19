@@ -9,7 +9,7 @@
 #include <netinet/in.h>
 #include <sys/wait.h>
 
-#define PORT 53
+#define PORT 8000
 #define BUFFMAX 256    //tamanho maximo da string
 
 int main (int argc, char * * argv) {
@@ -53,6 +53,8 @@ int main (int argc, char * * argv) {
     }
 
     while(1){
+        bzero ((char *)&buffer_in, sizeof (buffer_in));
+        bzero ((char *)&buffer_out, sizeof (buffer_out));
 
         length = sizeof(endCli);
         res = recvfrom(sock, buffer_in, BUFFMAX, 0, (struct sockaddr *) &endCli, (socklen_t*)&length);
@@ -68,7 +70,7 @@ int main (int argc, char * * argv) {
         printf ("\nResposta: %s", buffer_in);
 
 
-        printf ("\nMensagem: ");
+        printf ("\nMensagem ('exit' to quit): ");
 
         scanf("%s", &buffer_out);
 

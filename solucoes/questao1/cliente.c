@@ -52,8 +52,9 @@ int main (int argc, char **argv) {
     printf("IP: %s\n", argv[1]);
 
     while(1){
-
-        printf ("\nMensagem: ");
+        bzero ((char *)&buffer_in, sizeof (buffer_in));
+        bzero ((char *)&buffer_out, sizeof (buffer_out));
+        printf ("\nMensagem ('exit' to quit): ");
        
         scanf("%s", &buffer_out);
 

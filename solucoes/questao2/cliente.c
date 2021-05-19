@@ -9,7 +9,7 @@
 #include <netinet/in.h>
 #include <sys/wait.h>
 
-#define PORT 53
+#define PORT 8000
 #define ERROR -1
 #define BUFFMAX 256     //tamanho maximo da string
 
