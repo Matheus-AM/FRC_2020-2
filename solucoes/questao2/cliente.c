@@ -55,6 +55,9 @@ int main (int argc, char * * argv) {
     }
 
     while(1){
+        bzero ((char *)&buffer_in, sizeof (buffer_in));
+        bzero ((char *)&buffer_out, sizeof (buffer_out));
+
         printf ("\nCliente ('exit' to quit): ");
         scanf("%s", buffer_out);
         if (!strcmp (buffer_out, "exit")) {

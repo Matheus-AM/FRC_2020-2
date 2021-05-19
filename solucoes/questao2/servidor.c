@@ -78,6 +78,9 @@ int main (int argc, char *argv[]) {
         }
 
         while(1){
+            bzero ((char *)&buffer_in, sizeof (buffer_in));
+            bzero ((char *)&buffer_out, sizeof (buffer_out));
+            
             res = recv(clientSock, buffer_in, sizeof(buffer_in), 0);
             /* 
             socket file descriptor
