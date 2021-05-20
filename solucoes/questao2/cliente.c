@@ -60,12 +60,12 @@ int main (int argc, char * * argv) {
 
         printf ("\nCliente ('exit' to quit): ");
         scanf("%s", buffer_out);
-        if (!strcmp (buffer_out, "exit")) {
-            break;
-        }
+
 
         res = send(sock, buffer_out, strlen(buffer_out), 0);
-        /* 
+        if (!strcmp (buffer_out, "exit")) {
+            break;
+        }        /* 
         socket file descriptor
         mensage (buffer)
         mensage.length (length)
@@ -77,7 +77,9 @@ int main (int argc, char * * argv) {
         }
 
         res = recv(sock, buffer_in, sizeof(buffer_in), 0);
-        /* 
+        if (!strcmp (buffer_in, "exit")) {
+            break;
+        }/* 
         socket file descriptor
         mensage (buffer)
         mensage.length (length)

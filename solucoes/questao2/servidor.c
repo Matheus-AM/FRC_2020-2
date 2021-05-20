@@ -82,6 +82,9 @@ int main (int argc, char *argv[]) {
             bzero ((char *)&buffer_out, sizeof (buffer_out));
             
             res = recv(clientSock, buffer_in, sizeof(buffer_in), 0);
+            if (!strcmp (buffer_in, "exit")) {
+                break;
+            }
             /* 
             socket file descriptor
             mensage (buffer)
@@ -96,10 +99,11 @@ int main (int argc, char *argv[]) {
 
             printf ("\nServidor: ");
             scanf("%s", buffer_out);
-            if (!strcmp (buffer_out, "exit")) {
+
+            res = send(clientSock, buffer_out, sizeof(buffer_out), 0);
+            if(!strcmp(buffer_out, "exit")){
                 break;
             }
-            res = send(clientSock, buffer_out, sizeof(buffer_out), 0);
             /* 
             socket file descriptor
             mensage (buffer)
