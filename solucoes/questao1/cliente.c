@@ -56,7 +56,7 @@ int main (int argc, char **argv) {
         bzero ((char *)&buffer_out, sizeof (buffer_out));
         printf ("\nMensagem ('exit' to quit): ");
        
-        scanf("%s", &buffer_out);
+        scanf(" %s", &buffer_out);
 
 
 

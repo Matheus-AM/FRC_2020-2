@@ -98,7 +98,7 @@ int main (int argc, char *argv[]) {
             printf("\nCliente: %s", buffer_in);
 
             printf ("\nServidor: ");
-            scanf("%s", buffer_out);
+            scanf(" %s", buffer_out);
 
             res = send(clientSock, buffer_out, sizeof(buffer_out), 0);
             if(!strcmp(buffer_out, "exit")){

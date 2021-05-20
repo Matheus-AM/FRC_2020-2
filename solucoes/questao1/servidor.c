@@ -74,7 +74,7 @@ int main (int argc, char * * argv) {
 
         printf ("\nMensagem ('exit' to quit): ");
 
-        scanf("%s", &buffer_out);
+        scanf(" %s", &buffer_out);
 
         res = sendto(sock, buffer_out, BUFFMAX, 0, (struct sockaddr *) &endCli, (socklen_t) sizeof(endCli));
         if(!strcmp(buffer_out, "exit")){

@@ -59,7 +59,7 @@ int main (int argc, char * * argv) {
         bzero ((char *)&buffer_out, sizeof (buffer_out));
 
         printf ("\nCliente ('exit' to quit): ");
-        scanf("%s", buffer_out);
+        scanf(" %s", buffer_out);
 
 
         res = send(sock, buffer_out, strlen(buffer_out), 0);
