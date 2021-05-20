@@ -78,7 +78,6 @@ int main (int argc, char *argv[]) {
         }
         child[connections] = fork();
         if(child[connections] == 0){
-            break;
             while(1){
                 bzero ((char *)&buffer_in, sizeof (buffer_in));
                 bzero ((char *)&buffer_out, sizeof (buffer_out));
@@ -114,12 +113,14 @@ int main (int argc, char *argv[]) {
                 */
                 if (res == ERROR) {
                     perror ("Send");
-                    exit (0);
+                    exit(0);
                 }
 
             }
             close(clientSock);
             close(sock);
+
+            exit(0);
         }
         connections++;
     }
