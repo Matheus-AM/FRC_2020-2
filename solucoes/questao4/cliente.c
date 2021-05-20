@@ -9,73 +9,97 @@
 #include <netinet/in.h>
 #include <sys/wait.h>
 
-#define PORT 53
-#define BUFFMAX 256    //tamanho maximo da string
+#define PORT 5000
+#define ERROR -1
+#define BUFFMAX 256     //tamanho maximo da string
 
 int main (int argc, char * * argv) {
 
-    struct sockaddr_in network;
-
-    int sock,
-        newSock,
-        strucsize;
-
+    int sock;
     char buffer_in[BUFFMAX];
     char buffer_out[BUFFMAX];
-    int request, response, length;
+    int res;
 
     if (argc < 2) {
         printf ("Use %s <host>\n\n", argv [0]);
         exit (0);
     }
 
-    sock = socket(AF_INET, SOCK_DGRAM, 0);
+    sock = socket (AF_INET, SOCK_STREAM, 0);
     //domain –  AF_INET for IPv4/ AF_INET6 for IPv6 
     //type – SOCK_STREAM for TCP / SOCK_DGRAM for UDP 
     //0 means use default protocol for the address family.
 
-    if (sock == -1) {
-        perror("Socket");
+    if (sock == ERROR) {
+        perror ("Socket");
+        exit (0);
+    }
+
+    struct sockaddr_in endServ, endCli;
+
+    bzero ((char *)&endCli, sizeof (endCli));
+    endCli.sin_family = AF_INET;
+    endCli.sin_port = htons(0);
+    endCli.sin_addr.s_addr = htonl(INADDR_ANY); 
+
+    bzero ((char *)&endServ, sizeof (endServ));
+    endServ.sin_family = AF_INET;
+    endServ.sin_port = htons(PORT);
+    endServ.sin_addr.s_addr = inet_addr(argv[1]);
+
+    res = connect(sock, (struct sockaddr *)&endServ, sizeof (endServ));
+
+    if (res == ERROR) {
+        perror ("Connect");
+        exit (0);
+    }
+
+    pid_t cpid = fork();
+
+    if(cpid == 0) {
+        while(1){
+            bzero ((char *)&buffer_in, sizeof (buffer_in));
+
+            res = recv(sock, buffer_in, sizeof(buffer_in), 0);
+            if (!strcmp (buffer_in, "exit")) {
+                break;
+            }/* 
+            socket file descriptor
+            mensage (buffer)
+            mensage.length (length)
+            flag (0 default)
+            */
+            if (res == ERROR) {
+                perror ("Recive");
+                exit (0);
+            }
+            printf("\nServidor: %s", buffer_in);
+        }
         exit(0);
     }
+    else {
+        while(1){
+            bzero ((char *)&buffer_out, sizeof (buffer_out));
 
-    bzero ((char *)&network, sizeof (network));
-    network.sin_family = AF_INET;
-    network.sin_port = htons(PORTA);
-    network.sin_addr.s_addr = htonl(INADDR_ANY); 
+            printf ("\nCliente ('exit' to quit): ");
+            scanf(" %s", buffer_out);
 
-    strucsize = sizeof (network);
 
-    bind(sock, (struct sockaddr*) &network, sizeof(network));
-
-    printf("IP: %s\n", INADDR_ANY);
-
-    while(1){
-
-        printf ("\nMensagem: ");
-
-        scanf("%s", &buffer_out);
-
-        request = sendto(sock, buffer_out, BUFFMAX, 0, (struct sockaddr *) &network, (socklen_t) sizeof(network));
-
-        if (request == -1) {
-            perror("Sendto");
-            exit (0);
+            res = send(sock, buffer_out, strlen(buffer_out), 0);
+            if (!strcmp (buffer_out, "exit")) {
+                break;
+            }        /* 
+            socket file descriptor
+            mensage (buffer)
+            mensage.length (length)
+            flag (0 default)
+            */
+            if (res == ERROR) {
+                perror ("Send");
+                exit (0);
+            }
         }
-
-        response = recvfrom(sock, buffer_in, BUFFMAX, 0, (struct sockaddr *) &network, (socklen_t*)&length);
-
-        if (response == -1) {
-            perror("Recvfrom");
-            exit (0);
-        }
-
-        if(!strcmp(buffer_in, "exit")){
-            break;
-        }
-
-        printf ("\nResposta: %s", buffer_in);
     }
-
+    close(sock);
     return 0;
 }
