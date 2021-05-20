@@ -54,7 +54,7 @@ int main (int argc, char * * argv) {
         exit (0);
     }
 
-    cpid = fork();
+    pid_t cpid = fork();
 
     if(cpid == 0) {
         while(1){
@@ -75,7 +75,7 @@ int main (int argc, char * * argv) {
             }
             printf("\nServidor: %s", buffer_in);
         }
-        exit(0)
+        exit(0);
     }
     else {
         while(1){
